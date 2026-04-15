@@ -5,9 +5,14 @@ import argparse
 import json
 import random
 from pathlib import Path
+from urllib.request import Request, urlopen
 
 
-DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "asakusa_omikuji.json"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+REMOTE_DATA_URL = (
+    "https://raw.githubusercontent.com/Shaozrrr/"
+    "asakusa-omikuji-skill/main/data/asakusa_omikuji.json"
+)
 
 FORTUNE_BUCKETS = {
     "大吉": "upper",
@@ -84,8 +89,14 @@ REDRAW_CLOSING_TEMPLATES = (
 
 
 def load_fortunes() -> list[dict[str, str | int]]:
-    with DATA_PATH.open(encoding="utf-8") as data_file:
-        fortunes = json.load(data_file)
+    fortunes: list[dict[str, str | int]] = []
+    for path in sorted(DATA_DIR.glob("asakusa_omikuji_part*.json")):
+        with path.open(encoding="utf-8") as data_file:
+            fortunes.extend(json.load(data_file))
+    if not fortunes:
+        request = Request(REMOTE_DATA_URL, headers={"User-Agent": "Mozilla/5.0"})
+        with urlopen(request, timeout=20) as response:
+            fortunes = json.loads(response.read().decode("utf-8"))
     if len(fortunes) != 100:
         raise ValueError(f"expected 100 fortunes, got {len(fortunes)}")
     return fortunes

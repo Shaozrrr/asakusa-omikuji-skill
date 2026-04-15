@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#7b261b" />
+    <meta
+      name="description"
+      content="浅草寺启签 app：以更有仪式感的移动端体验，请一支真实的浅草寺观音灵签。"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>浅草寺 · 启签</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-glow page-glow-a"></div>
+    <div class="page-glow page-glow-b"></div>
+
+    <main class="app-shell">
+      <section class="hero panel">
+        <div class="hero-copy">
+          <p class="eyebrow">ASAKUSA OMIKUJI APP</p>
+          <h1>
+            浅草寺
+            <span>启签</span>
+          </h1>
+          <blockquote>
+            把尘声放在阶前，让木签先替你说话。
+          </blockquote>
+          <p class="hero-body">
+            檐下风轻，香意未散。你不必急着解释心中所问，只需暂且定神，轻轻请签。
+            余下的，交给木签轻响，交给这一纸尚未展开的吉凶。
+          </p>
+          <div class="hero-actions">
+            <button class="button button-primary" id="start-ritual">
+              步入签前
+            </button>
+            <button class="button button-secondary" id="scroll-overview">
+              看看仪式
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-scene" aria-hidden="true">
+          <div class="scene-aura"></div>
+          <div class="scene-plaque">浅草寺</div>
+          <div class="scene-vessel">
+            <span class="scene-stick scene-stick-a"></span>
+            <span class="scene-stick scene-stick-b"></span>
+            <span class="scene-stick scene-stick-c"></span>
+            <span class="scene-stick scene-stick-d"></span>
+            <span class="scene-stick scene-stick-e"></span>
+          </div>
+          <div class="scene-slip-paper">
+            <span>御签</span>
+          </div>
+          <div class="scene-base"></div>
+          <div class="scene-caption">签筒静置檐下，一签一意。</div>
+        </div>
+      </section>
+
+      <section class="overview panel" id="overview">
+        <div class="overview-heading">
+          <p class="eyebrow">RITUAL FLOW</p>
+          <h2>一签启心，次第展开</h2>
+        </div>
+        <div class="overview-grid">
+          <article class="overview-card">
+            <span class="overview-step">01</span>
+            <h3>定心</h3>
+            <p>先把心思放缓，不急着解释，不急着追问，让签筒先于语言开口。</p>
+          </article>
+          <article class="overview-card">
+            <span class="overview-step">02</span>
+            <h3>揭签</h3>
+            <p>签号、吉凶、诗曰与解曰依次展开，像一纸被慢慢抚平，而不是结果弹窗。</p>
+          </article>
+          <article class="overview-card">
+            <span class="overview-step">03</span>
+            <h3>纳签重请</h3>
+            <p>只在签意偏弱时留一扇门。若新签仍峭，便止于此，不再反复追逐一纸之变。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="ritual panel ritual-panel" id="ritual-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">MOBILE EXPERIENCE</p>
+            <h2 id="ritual-title">请一签</h2>
+          </div>
+          <button class="button button-ghost" id="reset-session" hidden>
+            收起签纸
+          </button>
+        </div>
+
+        <div class="ritual-stage" id="ritual-stage">
+          <div class="ritual-machine" id="ritual-machine" aria-hidden="true">
+            <div class="machine-aura"></div>
+            <div class="machine-label">签筒</div>
+            <div class="machine-vessel">
+              <span class="machine-stick machine-stick-a"></span>
+              <span class="machine-stick machine-stick-b"></span>
+              <span class="machine-stick machine-stick-c"></span>
+              <span class="machine-stick machine-stick-d"></span>
+              <span class="machine-stick machine-stick-e"></span>
+            </div>
+            <div class="machine-slip-card">
+              <span>御签</span>
+            </div>
+            <div class="machine-base"></div>
+          </div>
+
+          <div class="ritual-status" id="ritual-status">
+            把指尖轻轻停在这里，等一支签从静里响出来。
+          </div>
+
+          <div class="ritual-actions" id="ritual-actions">
+            <button class="button button-primary button-large" id="draw-button">
+              现在启签
+            </button>
+          </div>
+        </div>
+
+        <section class="result hidden" id="result-card" aria-live="polite">
+          <div class="result-topline" id="result-topline"></div>
+          <div class="result-reveal" id="result-reveal"></div>
+          <div class="fortune-chip" id="fortune-chip"></div>
+
+          <section class="fortune-section">
+            <h3>诗曰</h3>
+            <p class="poem" id="fortune-poem"></p>
+          </section>
+
+          <section class="fortune-section">
+            <h3>签意</h3>
+            <p class="explain" id="fortune-summary"></p>
+            <p class="explain explain-detail" id="fortune-explain"></p>
+          </section>
+
+          <section class="fortune-section">
+            <h3>解曰</h3>
+            <ul class="guidance-list" id="fortune-guidance"></ul>
+          </section>
+
+          <section class="ritual-note hidden" id="redraw-note">
+            <h3>若你不欲留此签</h3>
+            <p id="redraw-invitation"></p>
+            <p id="redraw-ritual"></p>
+            <p id="redraw-shift"></p>
+          </section>
+
+          <section class="ritual-note hidden" id="fate-shift-note">
+            <h3>转势</h3>
+            <p id="fate-shift-before"></p>
+            <p id="fate-shift-after"></p>
+          </section>
+
+          <section class="ritual-stop hidden" id="stop-note">
+            <p class="stop-label">今日宜止</p>
+            <p>
+              新签仍示峭意，今日的签话已经说尽。与其再追一纸之变，不如先把脚步放稳，把心火慢慢收低。
+            </p>
+          </section>
+
+          <p class="result-closing" id="result-closing"></p>
+
+          <div class="result-actions" id="result-actions"></div>
+        </section>
+      </section>
+    </main>
+
+    <dialog class="ritual-dialog" id="redraw-dialog">
+      <form method="dialog" class="ritual-dialog-card">
+        <p class="eyebrow">NAXIAN REDRAW</p>
+        <h3>纳签重请</h3>
+        <p>
+          旧签若你不愿强留，便把它留在纸上，让那一段滞气止于此处。若你决定再启一回，新签将只照见从此刻起的路数。
+        </p>
+        <div class="dialog-actions">
+          <button class="button button-secondary" value="cancel">再想想</button>
+          <button class="button button-primary" id="confirm-redraw" value="default">
+            销此旧签，再启新签
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <template id="action-button-template">
+      <button class="button"></button>
+    </template>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

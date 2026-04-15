@@ -37,7 +37,7 @@ description: Create a ritual-rich Chinese Asakusa Temple omikuji experience that
 ## 资源
 
 - 用 `scripts/draw_omikuji.py` 抽取真实签号，不要臆造结果
-- 用 `data/asakusa_omikuji.json` 作为浅草寺 1-100 签的签文来源
+- 用 `data/asakusa_omikuji_part*.json` 作为浅草寺 1-100 签的分片签文来源，运行时自动合并
 
 常用命令：
 

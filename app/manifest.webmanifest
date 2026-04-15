@@ -1,0 +1,17 @@
+{
+  "name": "浅草寺 · 启签",
+  "short_name": "浅草寺启签",
+  "description": "一款以浅草寺观音灵签为核心、强调仪式感与留白的移动端网页 app。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#170d0b",
+  "theme_color": "#7b261b",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

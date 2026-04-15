@@ -15,6 +15,7 @@
   <a href="#它做什么">它做什么</a> ·
   <a href="#仪式流程">仪式流程</a> ·
   <a href="#体验气质">体验气质</a> ·
+  <a href="#app-形态">App 形态</a> ·
   <a href="#快速试签">快速试签</a> ·
   <a href="#文件结构">文件结构</a>
 </p>
@@ -104,6 +105,30 @@
 
 所以它追求的并不是“像算命”，而是“像有分寸的签”。
 
+## App 形态
+
+这份仓库现在还多带了一层移动端优先的网页 app，位于 `app/` 目录。
+
+它不是把命令行结果简单贴进网页，而是把整个体验重新做成了更像“启签现场”的界面：
+
+- 首页先造景，再递出签筒
+- 抽签过程有节奏与动画，而不是瞬间跳结果
+- 揭签页把 `吉凶`、`诗曰`、`解曰` 摆成可阅读的签纸结构
+- 若签意偏弱，再引出 `纳签重请`
+- 若重请后仍不佳，则收束为“今日宜止”
+
+本地运行：
+
+```bash
+python3 scripts/serve_app.py
+```
+
+然后打开：
+
+```text
+http://127.0.0.1:4173/app/
+```
+
 ## 快速试签
 
 在本地目录中可以直接运行：
@@ -131,8 +156,10 @@ asakusa-omikuji-skill/
 ├── README.md
 ├── SKILL.md
 ├── agents/openai.yaml
-├── data/asakusa_omikuji.json
+├── app/
+├── data/asakusa_omikuji_part*.json
 ├── scripts/draw_omikuji.py
+├── scripts/serve_app.py
 └── tests/test_draw_omikuji.py
 ```
 
@@ -140,8 +167,10 @@ asakusa-omikuji-skill/
 
 - `SKILL.md`：定义触发条件、语气、流程与纳签重请规则
 - `agents/openai.yaml`：提供技能在 UI 中显示的元数据
-- `data/asakusa_omikuji.json`：存放浅草寺 1-100 签原始内容
+- `app/`：移动端优先的网页 app 界面与交互体验
+- `data/asakusa_omikuji_part*.json`：分片存放浅草寺 1-100 签原始内容，运行时自动合并读取
 - `scripts/draw_omikuji.py`：负责真实抽签、揭签与重请逻辑
+- `scripts/serve_app.py`：本地启动 app 的静态服务器
 - `tests/test_draw_omikuji.py`：覆盖基本抽签与重请行为
 
 ## 最后一页

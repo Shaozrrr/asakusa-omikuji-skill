@@ -9,24 +9,6 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 
 
-ROOT_INDEX = """<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="refresh" content="0; url=./app/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>浅草寺 · 启签</title>
-    <script>
-      window.location.replace("./app/");
-    </script>
-  </head>
-  <body>
-    <p>正在前往 <a href="./app/">浅草寺 · 启签</a>。</p>
-  </body>
-</html>
-"""
-
-
 def main() -> None:
     if DIST.exists():
         shutil.rmtree(DIST)
@@ -35,9 +17,9 @@ def main() -> None:
 
     shutil.copytree(ROOT / "app", DIST / "app")
     shutil.copytree(ROOT / "data", DIST / "data")
-
-    (DIST / "index.html").write_text(ROOT_INDEX, encoding="utf-8")
-    (DIST / ".nojekyll").write_text("", encoding="utf-8")
+    shutil.copy2(ROOT / "index.html", DIST / "index.html")
+    shutil.copy2(ROOT / ".nojekyll", DIST / ".nojekyll")
+    shutil.copy2(ROOT / "sw.js", DIST / "sw.js")
 
     print(f"Built static site at {DIST}")
 

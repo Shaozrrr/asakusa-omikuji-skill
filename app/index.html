@@ -11,10 +11,13 @@
       name="description"
       content="浅草寺启签 app：以更有仪式感的移动端体验，请一支真实的浅草寺观音灵签。"
     />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="浅草寺启签" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>浅草寺 · 启签</title>
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon-180.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -44,7 +47,11 @@
             <button class="button button-secondary" id="scroll-overview">
               看看仪式
             </button>
+            <button class="button button-ghost" id="install-app" hidden>
+              安装到手机
+            </button>
           </div>
+          <p class="install-note hidden" id="install-hint"></p>
         </div>
 
         <div class="hero-scene" aria-hidden="true">
@@ -187,6 +194,20 @@
           <button class="button button-secondary" value="cancel">再想想</button>
           <button class="button button-primary" id="confirm-redraw" value="default">
             销此旧签，再启新签
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="ritual-dialog" id="install-dialog">
+      <form method="dialog" class="ritual-dialog-card">
+        <p class="eyebrow">INSTALL APP</p>
+        <h3>添加到主屏幕</h3>
+        <p class="dialog-copy" id="install-dialog-copy"></p>
+        <ul class="dialog-list" id="install-dialog-steps"></ul>
+        <div class="dialog-actions">
+          <button class="button button-secondary" id="close-install-dialog" value="cancel">
+            我知道了
           </button>
         </div>
       </form>

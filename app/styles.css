@@ -157,6 +157,13 @@ blockquote {
   color: rgba(255, 243, 226, 0.78);
 }
 
+.install-note {
+  margin: 12px 0 0;
+  font-size: 0.94rem;
+  line-height: 1.8;
+  color: rgba(255, 243, 226, 0.7);
+}
+
 .hero-actions,
 .ritual-actions,
 .dialog-actions,
@@ -791,6 +798,21 @@ blockquote {
 .ritual-dialog-card p {
   line-height: 1.92;
   color: rgba(37, 24, 21, 0.76);
+}
+
+.dialog-copy {
+  margin-bottom: 10px;
+}
+
+.dialog-list {
+  margin: 0;
+  padding-left: 20px;
+  color: rgba(37, 24, 21, 0.82);
+  line-height: 1.9;
+}
+
+.dialog-list li + li {
+  margin-top: 8px;
 }
 
 @keyframes drift {

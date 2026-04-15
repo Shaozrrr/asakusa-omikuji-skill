@@ -80,6 +80,19 @@ const REDRAW_CLOSING_TEMPLATES = [
 const DEFAULT_STATUS =
   "风从雷门外过，尘声渐歇。若你愿意，请先步入签前，再启一支签。";
 
+const INSTALL_COPY = {
+  ios:
+    "在 iPhone 或 iPad 上，可以把它安放到主屏幕。这样以后再打开，就会更像一枚安静独立的 app。",
+  prompt:
+    "现在可以直接把它安装到手机主屏。装好以后，从主屏幕打开时会更像一枚独立 app。",
+  fallback:
+    "如果你的浏览器支持安装网页应用，可以把它添加到主屏幕，之后就能像 app 一样打开。",
+};
+
+const deferredState = {
+  installPrompt: null,
+};
+
 const initialState = {
   fortunes: [],
   currentPayload: null,
@@ -94,6 +107,8 @@ const state = { ...initialState };
 const elements = {
   startRitual: document.querySelector("#start-ritual"),
   scrollOverview: document.querySelector("#scroll-overview"),
+  installApp: document.querySelector("#install-app"),
+  installHint: document.querySelector("#install-hint"),
   resetSession: document.querySelector("#reset-session"),
   ritualPanel: document.querySelector("#ritual-panel"),
   ritualTitle: document.querySelector("#ritual-title"),
@@ -120,6 +135,10 @@ const elements = {
   resultActions: document.querySelector("#result-actions"),
   redrawDialog: document.querySelector("#redraw-dialog"),
   confirmRedraw: document.querySelector("#confirm-redraw"),
+  installDialog: document.querySelector("#install-dialog"),
+  installDialogCopy: document.querySelector("#install-dialog-copy"),
+  installDialogSteps: document.querySelector("#install-dialog-steps"),
+  closeInstallDialog: document.querySelector("#close-install-dialog"),
   actionButtonTemplate: document.querySelector("#action-button-template"),
 };
 
@@ -268,6 +287,113 @@ async function loadFortunes() {
 
 function setStatus(text) {
   elements.ritualStatus.textContent = text;
+}
+
+function isStandaloneMode() {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true
+  );
+}
+
+function isIosSafari() {
+  const userAgent = window.navigator.userAgent;
+  const isAppleDevice = /iphone|ipad|ipod/i.test(userAgent);
+  const isSafari = /safari/i.test(userAgent) && !/crios|fxios|edgios/i.test(userAgent);
+  return isAppleDevice && isSafari;
+}
+
+function renderInstallSteps(steps) {
+  elements.installDialogSteps.replaceChildren();
+  steps.forEach((step) => {
+    const li = document.createElement("li");
+    li.textContent = step;
+    elements.installDialogSteps.appendChild(li);
+  });
+}
+
+function openInstallDialog() {
+  if (deferredState.installPrompt) {
+    return;
+  }
+
+  if (isIosSafari() && !isStandaloneMode()) {
+    elements.installDialogCopy.textContent = INSTALL_COPY.ios;
+    renderInstallSteps([
+      "点开浏览器底部或顶部的“分享”按钮。",
+      "在菜单里找到“添加到主屏幕”。",
+      "确认名称后点“添加”，以后就能像 app 一样打开。",
+    ]);
+  } else {
+    elements.installDialogCopy.textContent = INSTALL_COPY.fallback;
+    renderInstallSteps([
+      "如果浏览器地址栏或菜单里出现“安装应用”或“添加到主屏幕”，直接点它。",
+      "若暂时没有看到安装入口，可以先把这个页面收藏，之后再从支持安装的浏览器打开。",
+    ]);
+  }
+
+  elements.installDialog.showModal();
+}
+
+function updateInstallUI() {
+  const standalone = isStandaloneMode();
+
+  if (standalone) {
+    elements.installApp.hidden = true;
+    elements.installHint.hidden = false;
+    elements.installHint.textContent = "当前已在 app 模式中打开，可以像主屏应用一样使用。";
+    return;
+  }
+
+  if (deferredState.installPrompt) {
+    elements.installApp.hidden = false;
+    elements.installApp.textContent = "安装到手机";
+    elements.installHint.hidden = false;
+    elements.installHint.textContent = "可以添加到手机主屏，以更接近 app 的方式打开。";
+    return;
+  }
+
+  if (isIosSafari()) {
+    elements.installApp.hidden = false;
+    elements.installApp.textContent = "添加到主屏幕";
+    elements.installHint.hidden = false;
+    elements.installHint.textContent = "在 Safari 中可通过分享菜单添加到主屏幕。";
+    return;
+  }
+
+  elements.installApp.hidden = false;
+  elements.installApp.textContent = "如何安装";
+  elements.installHint.hidden = false;
+  elements.installHint.textContent = "在支持安装网页应用的浏览器里，可以把它作为 app 添加到手机。";
+}
+
+async function handleInstallAction() {
+  if (deferredState.installPrompt) {
+    deferredState.installPrompt.prompt();
+    const { outcome } = await deferredState.installPrompt.userChoice;
+    deferredState.installPrompt = null;
+    updateInstallUI();
+    if (outcome === "accepted") {
+      setStatus("这枚签已可安放到手机主屏。下次再见，会更像一枚静静候着你的 app。");
+    }
+    return;
+  }
+
+  openInstallDialog();
+}
+
+async function registerServiceWorker() {
+  if (!("serviceWorker" in window.navigator)) {
+    return;
+  }
+
+  try {
+    await window.navigator.serviceWorker.register("../sw.js", {
+      scope: "../",
+    });
+  } catch (error) {
+    console.error("service worker registration failed", error);
+  }
 }
 
 function syncControls() {
@@ -491,6 +617,18 @@ async function performDraw(mode = "draw") {
 }
 
 function bindEvents() {
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredState.installPrompt = event;
+    updateInstallUI();
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredState.installPrompt = null;
+    updateInstallUI();
+    setStatus("浅草寺启签已安放到主屏。往后再开时，会像一枚独立 app 静静候在那里。");
+  });
+
   elements.scrollOverview.addEventListener("click", () => {
     document.querySelector("#overview").scrollIntoView({
       behavior: "smooth",
@@ -510,6 +648,10 @@ function bindEvents() {
     }, 260);
   });
 
+  elements.installApp.addEventListener("click", () => {
+    void handleInstallAction();
+  });
+
   elements.drawButton.addEventListener("click", () => performDraw("draw"));
   elements.resetSession.addEventListener("click", () => {
     resetSession({
@@ -521,13 +663,19 @@ function bindEvents() {
     elements.redrawDialog.close();
     await performDraw("redraw");
   });
+
+  elements.closeInstallDialog.addEventListener("click", () => {
+    elements.installDialog.close();
+  });
 }
 
 async function bootstrap() {
   try {
     await loadFortunes();
+    await registerServiceWorker();
     bindEvents();
     syncControls();
+    updateInstallUI();
     setStatus(DEFAULT_STATUS);
   } catch (error) {
     console.error(error);

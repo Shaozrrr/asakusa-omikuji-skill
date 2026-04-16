@@ -7,7 +7,6 @@ final class WebViewController: UIViewController {
     private lazy var webView: WKWebView = {
         let userContentController = WKUserContentController()
         userContentController.add(self, name: "haptics")
-        userContentController.add(self, name: "share")
 
         let configuration = WKWebViewConfiguration()
         configuration.setURLSchemeHandler(schemeHandler, forURLScheme: "asakusa")
@@ -68,19 +67,6 @@ final class WebViewController: UIViewController {
         }
     }
 
-    private func presentShareSheet(text: String) {
-        let controller = UIActivityViewController(activityItems: [text], applicationActivities: nil)
-        if let popover = controller.popoverPresentationController {
-            popover.sourceView = view
-            popover.sourceRect = CGRect(
-                x: view.bounds.midX,
-                y: view.bounds.maxY - 44,
-                width: 1,
-                height: 1
-            )
-        }
-        present(controller, animated: true)
-    }
 }
 
 extension WebViewController: WKScriptMessageHandler {
@@ -90,11 +76,6 @@ extension WebViewController: WKScriptMessageHandler {
             if let payload = message.body as? [String: Any],
                let type = payload["type"] as? String {
                 performHaptic(type)
-            }
-        case "share":
-            if let payload = message.body as? [String: Any],
-               let text = payload["text"] as? String {
-                presentShareSheet(text: text)
             }
         default:
             break

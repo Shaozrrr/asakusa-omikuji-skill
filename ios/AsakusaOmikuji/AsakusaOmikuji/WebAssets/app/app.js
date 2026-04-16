@@ -82,11 +82,11 @@ const DEFAULT_STATUS =
 
 const INSTALL_COPY = {
   ios:
-    "在 iPhone 或 iPad 上，可以把它安放到主屏幕。这样以后再打开，就会更像一枚安静独立的 app。",
+    "在苹果手机或平板上，可以把它安放到主屏幕。这样以后再打开，就会更像一枚安静独立的主屏应用。",
   prompt:
-    "现在可以直接把它安装到手机主屏。装好以后，从主屏幕打开时会更像一枚独立 app。",
+    "现在可以直接把它安装到手机主屏。装好以后，从主屏幕打开时会更像一枚独立的主屏应用。",
   fallback:
-    "如果你的浏览器支持安装网页应用，可以把它添加到主屏幕，之后就能像 app 一样打开。",
+    "如果你的浏览器支持安装网页应用，可以把它添加到主屏幕，之后就能像主屏应用一样打开。",
 };
 
 const deferredState = {
@@ -344,7 +344,7 @@ function openInstallDialog() {
     renderInstallSteps([
       "点开浏览器底部或顶部的“分享”按钮。",
       "在菜单里找到“添加到主屏幕”。",
-      "确认名称后点“添加”，以后就能像 app 一样打开。",
+      "确认名称后点“添加”，以后就能像主屏应用一样打开。",
     ]);
   } else {
     elements.installDialogCopy.textContent = INSTALL_COPY.fallback;
@@ -369,7 +369,7 @@ function updateInstallUI() {
   if (standalone) {
     elements.installApp.hidden = true;
     elements.installHint.hidden = false;
-    elements.installHint.textContent = "当前已在 app 模式中打开，可以像主屏应用一样使用。";
+    elements.installHint.textContent = "当前已在主屏模式中打开，可以像主屏应用一样使用。";
     return;
   }
 
@@ -377,7 +377,7 @@ function updateInstallUI() {
     elements.installApp.hidden = false;
     elements.installApp.textContent = "安装到手机";
     elements.installHint.hidden = false;
-    elements.installHint.textContent = "可以添加到手机主屏，以更接近 app 的方式打开。";
+    elements.installHint.textContent = "可以添加到手机主屏，以更贴近主屏应用的方式打开。";
     return;
   }
 
@@ -392,7 +392,7 @@ function updateInstallUI() {
   elements.installApp.hidden = false;
   elements.installApp.textContent = "如何安装";
   elements.installHint.hidden = false;
-  elements.installHint.textContent = "在支持安装网页应用的浏览器里，可以把它作为 app 添加到手机。";
+  elements.installHint.textContent = "在支持安装网页应用的浏览器里，可以把它作为主屏应用添加到手机。";
 }
 
 async function handleInstallAction() {
@@ -402,7 +402,7 @@ async function handleInstallAction() {
     deferredState.installPrompt = null;
     updateInstallUI();
     if (outcome === "accepted") {
-      setStatus("这枚签已可安放到手机主屏。下次再见，会更像一枚静静候着你的 app。");
+      setStatus("这枚签已可安放到手机主屏。下次再见，会更像一枚静静候着你的主屏应用。");
     }
     return;
   }
@@ -412,58 +412,6 @@ async function handleInstallAction() {
 
 function triggerHaptic(type) {
   postNativeMessage("haptics", { type });
-}
-
-function buildShareText(payload) {
-  return [
-    payload.ceremony.reveal,
-    "",
-    "诗曰：",
-    payload.fortune["诗曰"],
-    "",
-    "签意：",
-    payload.summary,
-    payload.fortune["四句解说"],
-    "",
-    "解曰：",
-    ...payload.guidance.map((item) => `- ${item.label}：${item.value}`),
-    "",
-    payload.ceremony.closing,
-  ].join("\n");
-}
-
-async function shareCurrentFortune() {
-  if (!state.currentPayload) {
-    return;
-  }
-
-  const title = state.currentPayload.fortuneChipTitle ?? "浅草·启签";
-  const text = buildShareText(state.currentPayload);
-
-  if (typeof window.navigator.share === "function") {
-    try {
-      await window.navigator.share({ title, text });
-      setStatus("签纸已递到分享面板里。");
-      return;
-    } catch (error) {
-      if (error?.name === "AbortError") {
-        return;
-      }
-    }
-  }
-
-  if (postNativeMessage("share", { title, text })) {
-    setStatus("签纸已递到系统分享面板里。");
-    return;
-  }
-
-  if (window.navigator.clipboard?.writeText) {
-    await window.navigator.clipboard.writeText(`${title}\n\n${text}`);
-    setStatus("签文已复制，可以直接贴给别人。");
-    return;
-  }
-
-  setStatus("当前环境暂不支持直接分享，可长按签文文字后复制。");
 }
 
 async function registerServiceWorker() {
@@ -536,7 +484,6 @@ function renderResult(payload) {
   elements.resultTopline.textContent = payload.ceremony.opening;
   elements.resultReveal.textContent = payload.ceremony.reveal;
   elements.fortuneChip.textContent = `第${payload.fortune["签号"]}签 · ${payload.fortune["吉凶"]}`;
-  payload.fortuneChipTitle = elements.fortuneChip.textContent;
   elements.fortuneChip.dataset.bucket = payload.fortuneBucket;
   elements.fortunePoem.textContent = payload.fortune["诗曰"];
   elements.fortuneSummary.textContent = payload.summary;
@@ -633,12 +580,6 @@ function renderResult(payload) {
     }
   }
 
-  elements.resultActions.appendChild(
-    buildAction("分享此签", "button-ghost", () => {
-      void shareCurrentFortune();
-    }),
-  );
-
   requestAnimationFrame(() => {
     elements.resultCard.classList.add("is-visible");
   });
@@ -730,7 +671,7 @@ function bindEvents() {
   window.addEventListener("appinstalled", () => {
     deferredState.installPrompt = null;
     updateInstallUI();
-    setStatus("浅草·启签已安放到主屏。往后再开时，会像一枚独立 app 静静候在那里。");
+    setStatus("浅草·启签已安放到主屏。往后再开时，会像一枚独立的主屏应用静静候在那里。");
   });
 
   elements.scrollOverview.addEventListener("click", () => {
@@ -783,7 +724,7 @@ async function bootstrap() {
     setStatus(DEFAULT_STATUS);
   } catch (error) {
     console.error(error);
-    setStatus("签文没有顺利载入。请确认你正在通过本地服务器打开这个 app。");
+    setStatus("签文没有顺利载入。请确认你正在通过本地服务器打开这个页面。");
     elements.drawButton.disabled = true;
     elements.startRitual.disabled = true;
   }

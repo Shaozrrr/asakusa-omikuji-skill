@@ -441,6 +441,10 @@ blockquote {
   padding: 28px;
 }
 
+.overview-heading {
+  margin-bottom: 12px;
+}
+
 .overview-grid {
   display: grid;
   gap: 16px;

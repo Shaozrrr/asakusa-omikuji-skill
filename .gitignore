@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 bin/
 dist/
+ios/**/xcuserdata/
+ios/**/DerivedData/
+ios/**/.DS_Store

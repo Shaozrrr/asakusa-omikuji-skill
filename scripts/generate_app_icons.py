@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import json
 import math
 import struct
 import zlib
@@ -9,6 +10,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 ICONS_DIR = ROOT / "app" / "icons"
+IOS_APPICON_SET = (
+    ROOT
+    / "ios"
+    / "AsakusaOmikuji"
+    / "AsakusaOmikuji"
+    / "Assets.xcassets"
+    / "AppIcon.appiconset"
+)
 
 
 def lerp(a: float, b: float, t: float) -> float:
@@ -201,6 +210,8 @@ def render_icon(size: int) -> list[bytes]:
 
 def main() -> None:
     ICONS_DIR.mkdir(parents=True, exist_ok=True)
+    IOS_APPICON_SET.mkdir(parents=True, exist_ok=True)
+
     outputs = {
         "icon-192.png": 192,
         "icon-512.png": 512,
@@ -211,6 +222,42 @@ def main() -> None:
     for filename, size in outputs.items():
         rows = render_icon(size)
         write_png(ICONS_DIR / filename, size, size, rows)
+
+    ios_outputs = [
+        ("app-icon-20@2x.png", 40, {"idiom": "iphone", "size": "20x20", "scale": "2x"}),
+        ("app-icon-20@3x.png", 60, {"idiom": "iphone", "size": "20x20", "scale": "3x"}),
+        ("app-icon-29@2x.png", 58, {"idiom": "iphone", "size": "29x29", "scale": "2x"}),
+        ("app-icon-29@3x.png", 87, {"idiom": "iphone", "size": "29x29", "scale": "3x"}),
+        ("app-icon-40@2x.png", 80, {"idiom": "iphone", "size": "40x40", "scale": "2x"}),
+        ("app-icon-40@3x.png", 120, {"idiom": "iphone", "size": "40x40", "scale": "3x"}),
+        ("app-icon-60@2x.png", 120, {"idiom": "iphone", "size": "60x60", "scale": "2x"}),
+        ("app-icon-60@3x.png", 180, {"idiom": "iphone", "size": "60x60", "scale": "3x"}),
+        ("app-icon-ipad-20.png", 20, {"idiom": "ipad", "size": "20x20", "scale": "1x"}),
+        ("app-icon-ipad-20@2x.png", 40, {"idiom": "ipad", "size": "20x20", "scale": "2x"}),
+        ("app-icon-ipad-29.png", 29, {"idiom": "ipad", "size": "29x29", "scale": "1x"}),
+        ("app-icon-ipad-29@2x.png", 58, {"idiom": "ipad", "size": "29x29", "scale": "2x"}),
+        ("app-icon-ipad-40.png", 40, {"idiom": "ipad", "size": "40x40", "scale": "1x"}),
+        ("app-icon-ipad-40@2x.png", 80, {"idiom": "ipad", "size": "40x40", "scale": "2x"}),
+        ("app-icon-ipad-76.png", 76, {"idiom": "ipad", "size": "76x76", "scale": "1x"}),
+        ("app-icon-ipad-76@2x.png", 152, {"idiom": "ipad", "size": "76x76", "scale": "2x"}),
+        ("app-icon-ipad-83.5@2x.png", 167, {"idiom": "ipad", "size": "83.5x83.5", "scale": "2x"}),
+        ("app-icon-marketing-1024.png", 1024, {"idiom": "ios-marketing", "size": "1024x1024", "scale": "1x"}),
+    ]
+
+    ios_images = []
+    for filename, size, metadata in ios_outputs:
+        rows = render_icon(size)
+        write_png(IOS_APPICON_SET / filename, size, size, rows)
+        ios_images.append({**metadata, "filename": filename})
+
+    contents = {
+        "images": ios_images,
+        "info": {"author": "xcode", "version": 1},
+    }
+    (IOS_APPICON_SET / "Contents.json").write_text(
+        json.dumps(contents, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
     print(f"Generated app icons in {ICONS_DIR}")
 

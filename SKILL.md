@@ -1,9 +1,9 @@
 ---
 name: asakusa-omikuji-skill
-description: Create a ritual-rich Chinese Asakusa Temple omikuji experience that directly reveals one real lot from the bundled 1-100 fortune set, with no question intake or personalized analysis, and gently offers a single 纳签重请 ritual when the lot is unfavorable so the old slip can be symbolically destroyed and a new course invited. Use when the user wants to simply draw a 浅草寺签, reopen fate through a ceremonial redraw, or receive elegant temple-like prose instead of casual fortune-telling chatter.
+description: Create a ritual-rich Chinese Asakusa omikuji experience that directly reveals one real lot from the bundled 1-100 fortune set, with no question intake or personalized analysis, and gently offers a single 纳签重请 ritual when the lot is unfavorable so the old slip can be symbolically destroyed and a new course invited. Use when the user wants to simply draw a 浅草签, reopen fate through a ceremonial redraw, or receive elegant shrine-like prose instead of casual fortune-telling chatter.
 ---
 
-# 浅草寺.skill
+# 浅草·启签
 
 这是一场“启签”，不是一段问答。
 
@@ -12,7 +12,7 @@ description: Create a ritual-rich Chinese Asakusa Temple omikuji experience that
 ## 何时使用
 
 在这些场景触发本技能：
-- 用户说“抽一签”“求一签”“来个浅草寺签”
+- 用户说“抽一签”“求一签”“来个浅草签”
 - 用户抽完后说“重抽”“再请一签”“把这张销掉”
 - 用户想要纯粹的签文体验，而不是围绕问题做分析
 
@@ -29,7 +29,7 @@ description: Create a ritual-rich Chinese Asakusa Temple omikuji experience that
 篇幅上宜比一句提示更从容，最好是 2-3 句：先造景，再收心，最后只落一句 `抽一签`。
 
 可参考：
-- “风从雷门外过，尘声渐歇，像有人把一整日的杂念都轻轻按低了些。此刻不必急着分辨吉凶，也不必先说心事，你只需把心定住，像立在浅草寺檐下一样静一静。若愿意启这一签，只需说一句：抽一签。”
+- “风从雷门外过，尘声渐歇，像有人把一整日的杂念都轻轻按低了些。此刻不必急着分辨吉凶，也不必先说心事，你只需把心定住，像立在浅草檐下一样静一静。若愿意启这一签，只需说一句：抽一签。”
 - “香意未散，木签未启，世间许多尚未落定的事，都可以先放在阶前片刻。这里不急着问你为什么而来，只想先替你把签筒递到手边。你若想请签，只需轻轻说：抽一签。”
 
 只有在用户真的抽到偏弱签时，才委婉告诉他还可以行一回 `纳签重请`。
@@ -37,7 +37,7 @@ description: Create a ritual-rich Chinese Asakusa Temple omikuji experience that
 ## 资源
 
 - 用 `scripts/draw_omikuji.py` 抽取真实签号，不要臆造结果
-- 用 `data/asakusa_omikuji_part*.json` 作为浅草寺 1-100 签的分片签文来源，运行时自动合并
+- 用 `data/asakusa_omikuji_part*.json` 作为浅草 1-100 签的分片签文来源，运行时自动合并
 
 常用命令：
 
@@ -78,7 +78,7 @@ python3 scripts/draw_omikuji.py --redraw-from-sign 61
 不要一上来就报结果，要像把人从俗世里轻轻带到檐下。
 
 可以参考这种感觉：
-- “先把杂念放低一些，如晨烟拂过浅草寺的木檐。签筒已静，我们来请这一签。”
+- “先把杂念放低一些，如晨烟拂过浅草的木檐。签筒已静，我们来请这一签。”
 - “不必多言，也不必先分辨吉凶。把心收住片刻，让木签先替你说话。”
 - “世事先放在阶前，香意未散，签意未明。此刻只做一件事，轻轻启这一签。”
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-# 浅草寺.skill
+# 浅草·启签
 
 > 把尘声放在阶前，让木签先替你说话。
 
@@ -16,12 +16,13 @@
   <a href="#仪式流程">仪式流程</a> ·
   <a href="#体验气质">体验气质</a> ·
   <a href="#app-形态">App 形态</a> ·
+  <a href="#ios-与-app-store">iOS 与 App Store</a> ·
   <a href="#快速试签">快速试签</a> ·
   <a href="#文件结构">文件结构</a>
 </p>
 
 <p align="center">
-  一份为 <strong>浅草寺观音灵签</strong> 所写的 Codex skill。<br />
+  一份为 <strong>浅草观音灵签</strong> 所写的 Codex skill。<br />
   它不喧哗，不追问，不替人争辩命运，只在檐下递出签筒，然后安静地揭开一纸吉凶。
 </p>
 
@@ -32,9 +33,9 @@
 ## 缘起
 
 有些抽签体验一打开，就像热闹的按钮游戏。  
-而浅草寺这一类签，不该只是“随机结果”，它更像一件需要被郑重对待的小事。
+而浅草这一类签，不该只是“随机结果”，它更像一件需要被郑重对待的小事。
 
-于是有了这份 `浅草寺.skill`。
+于是有了这份 `浅草·启签`。
 
 它想做的，不是把签文讲得神神叨叨，也不是把古意磨成平庸的功能说明，而是尽量保留一种更安静的秩序:
 
@@ -48,9 +49,9 @@
 
 ## 它做什么
 
-这份 skill 提供的是一套完整的浅草寺式启签体验：
+这份 skill 提供的是一套完整的浅草式启签体验：
 
-- 直接抽取真实的浅草寺 1-100 签，不凭空编造结果
+- 直接抽取真实的浅草 1-100 签，不凭空编造结果
 - 在开场、揭签、收尾处维持统一而克制的仪式感中文
 - 将 `签号`、`吉凶`、`诗曰` 放在前面，让签面先说话
 - 完整展示原签里的 `解曰`，保留它本来的条目结构
@@ -117,6 +118,7 @@
 - 若签意偏弱，再引出 `纳签重请`
 - 若重请后仍不佳，则收束为“今日宜止”
 - 现在也支持作为 PWA 安装到手机主屏，并缓存基础壳与签文数据
+- 也提供了可继续上架 App Store 的 iOS 原生壳工程
 
 本地运行：
 
@@ -128,6 +130,31 @@ python3 scripts/serve_app.py
 
 ```text
 http://127.0.0.1:4173/app/
+```
+
+## iOS 与 App Store
+
+仓库里现在已经补进了 `ios/AsakusaOmikuji` 原生工程。
+
+它不是简单地把线上页面塞进浏览器壳，而是做了几层原生补足：
+
+- 用 `WKWebView` 加载 App Bundle 内的本地 `WebAssets`
+- 用自定义 scheme 提供本地资源读取，避免依赖线上网页
+- 接入原生触感反馈
+- 接入原生系统分享
+- 自带 Launch Screen、AppIcon 与 Privacy Manifest
+
+同步资源：
+
+```bash
+python3 scripts/sync_ios_web_assets.py
+python3 scripts/generate_app_icons.py
+```
+
+更完整的提审清单见：
+
+```text
+docs/app-store-launch.md
 ```
 
 ## 快速试签
@@ -158,8 +185,11 @@ asakusa-omikuji-skill/
 ├── SKILL.md
 ├── agents/openai.yaml
 ├── app/
+├── docs/app-store-launch.md
 ├── data/asakusa_omikuji_part*.json
+├── ios/AsakusaOmikuji
 ├── scripts/draw_omikuji.py
+├── scripts/sync_ios_web_assets.py
 ├── scripts/serve_app.py
 └── tests/test_draw_omikuji.py
 ```
@@ -169,8 +199,11 @@ asakusa-omikuji-skill/
 - `SKILL.md`：定义触发条件、语气、流程与纳签重请规则
 - `agents/openai.yaml`：提供技能在 UI 中显示的元数据
 - `app/`：移动端优先的网页 app 界面与交互体验
-- `data/asakusa_omikuji_part*.json`：分片存放浅草寺 1-100 签原始内容，运行时自动合并读取
+- `docs/app-store-launch.md`：整理 App Store 提审前的关键清单与风险点
+- `data/asakusa_omikuji_part*.json`：分片存放浅草 1-100 签原始内容，运行时自动合并读取
+- `ios/AsakusaOmikuji`：用于上架 App Store 的 iOS 原生壳工程
 - `scripts/draw_omikuji.py`：负责真实抽签、揭签与重请逻辑
+- `scripts/sync_ios_web_assets.py`：把网页层资源同步进 iOS 工程
 - `scripts/serve_app.py`：本地启动 app 的静态服务器
 - `tests/test_draw_omikuji.py`：覆盖基本抽签与重请行为
 

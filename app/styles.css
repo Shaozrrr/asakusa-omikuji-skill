@@ -19,8 +19,8 @@
   --radius-lg: 24px;
   --radius-md: 18px;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Baskerville,
-    "Times New Roman", serif;
+  font-family: "Noto Serif SC", "Songti SC", "STSong", "Iowan Old Style",
+    "Palatino Linotype", "Book Antiqua", Baskerville, "Times New Roman", serif;
 }
 
 * {

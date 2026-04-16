@@ -1,4 +1,4 @@
-const CACHE_NAME = "asakusa-omikuji-pwa-v3";
+const CACHE_NAME = "asakusa-omikuji-pwa-v4";
 const ROOT = new URL("./", self.location);
 
 const SHELL_PATHS = [
@@ -6,7 +6,7 @@ const SHELL_PATHS = [
   "./index.html",
   "./app/",
   "./app/index.html",
-  "./app/styles.css",
+  "./app/styles.css?v=20260416-font1",
   "./app/app.js?v=20260416-2",
   "./app/manifest.webmanifest",
   "./app/icon.svg",

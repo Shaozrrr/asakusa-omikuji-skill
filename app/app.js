@@ -1,5 +1,7 @@
+const DATA_VERSION = "20260418-text1";
+
 const DATA_PATHS = Array.from({ length: 10 }, (_, index) =>
-  `../data/asakusa_omikuji_part${String(index + 1).padStart(2, "0")}.json`,
+  `../data/asakusa_omikuji_part${String(index + 1).padStart(2, "0")}.json?v=${DATA_VERSION}`,
 );
 
 const FORTUNE_BUCKETS = {

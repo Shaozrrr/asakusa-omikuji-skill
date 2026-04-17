@@ -1,5 +1,6 @@
-const CACHE_NAME = "asakusa-omikuji-pwa-v4";
+const CACHE_NAME = "asakusa-omikuji-pwa-v5";
 const ROOT = new URL("./", self.location);
+const DATA_VERSION = "20260418-text1";
 
 const SHELL_PATHS = [
   "./",
@@ -17,7 +18,7 @@ const SHELL_PATHS = [
 ];
 
 const DATA_PATHS = Array.from({ length: 10 }, (_, index) =>
-  `./data/asakusa_omikuji_part${String(index + 1).padStart(2, "0")}.json`,
+  `./data/asakusa_omikuji_part${String(index + 1).padStart(2, "0")}.json?v=${DATA_VERSION}`,
 );
 
 const PRECACHE_URLS = [...SHELL_PATHS, ...DATA_PATHS].map((path) =>

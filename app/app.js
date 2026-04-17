@@ -1,4 +1,4 @@
-const DATA_VERSION = "20260418-text2";
+const DATA_VERSION = "20260418-text3";
 
 const DATA_PATHS = Array.from({ length: 10 }, (_, index) =>
   `../data/asakusa_omikuji_part${String(index + 1).padStart(2, "0")}.json?v=${DATA_VERSION}`,

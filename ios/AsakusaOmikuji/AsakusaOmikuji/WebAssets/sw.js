@@ -1,6 +1,6 @@
-const CACHE_NAME = "asakusa-omikuji-pwa-v6";
+const CACHE_NAME = "asakusa-omikuji-pwa-v7";
 const ROOT = new URL("./", self.location);
-const DATA_VERSION = "20260418-text2";
+const DATA_VERSION = "20260418-text3";
 
 const SHELL_PATHS = [
   "./",

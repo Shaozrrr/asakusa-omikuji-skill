@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="450" y1="32" x2="450" y2="618" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4B312B"/>
+      <stop offset="1" stop-color="#241A19"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(450 190) rotate(90) scale(164 176)">
+      <stop stop-color="#E6C992" stop-opacity=".2"/>
+      <stop offset=".54" stop-color="#B14D3D" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#E6C992" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="450" y1="304" x2="450" y2="550" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C9A06D"/>
+      <stop offset=".52" stop-color="#916647"/>
+      <stop offset="1" stop-color="#563A2D"/>
+    </linearGradient>
+    <linearGradient id="metalDark" x1="450" y1="414" x2="450" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8F6448"/>
+      <stop offset="1" stop-color="#412924"/>
+    </linearGradient>
+    <linearGradient id="metalLip" x1="450" y1="286" x2="450" y2="354" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9B487"/>
+      <stop offset="1" stop-color="#8D6143"/>
+    </linearGradient>
+    <linearGradient id="plinth" x1="450" y1="534" x2="450" y2="574" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#744537"/>
+      <stop offset="1" stop-color="#38211D"/>
+    </linearGradient>
+    <filter id="smoke" x="288" y="44" width="324" height="282" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    <filter id="softShadow" x="284" y="248" width="332" height="340" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feOffset dy="24"/>
+      <feGaussianBlur stdDeviation="18"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.05 0 0 0 0 0.03 0 0 0 0 0.03 0 0 0 0.34 0"/>
+    </filter>
+  </defs>
+
+  <rect x="18" y="18" width="864" height="614" rx="44" fill="url(#bg)" stroke="rgba(255,242,220,.08)"/>
+  <rect x="48" y="48" width="804" height="554" rx="34" stroke="rgba(255,255,255,.04)"/>
+  <rect x="18" y="18" width="864" height="614" rx="44" fill="url(#halo)"/>
+
+  <g opacity=".82" filter="url(#smoke)">
+    <path d="M434 278C401 240 406 212 431 184C456 156 465 124 449 82" stroke="#F2DFC1" stroke-opacity=".54" stroke-width="6" stroke-linecap="round"/>
+    <path d="M468 286C495 252 493 224 476 196C459 167 452 135 461 98" stroke="#F2DFC1" stroke-opacity=".38" stroke-width="5" stroke-linecap="round"/>
+    <path d="M447 264C445 232 452 212 468 192C484 171 490 146 482 118" stroke="#E8CFA7" stroke-opacity=".22" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+
+  <ellipse cx="450" cy="560" rx="136" ry="22" fill="#150F10" fill-opacity=".5"/>
+
+  <g filter="url(#softShadow)">
+    <path d="M348 454C348 406 387 366 435 366H465C513 366 552 406 552 454V462H348V454Z" fill="url(#metal)"/>
+    <path d="M376 316C376 292 395 272 419 272H481C505 272 524 292 524 316V372H376V316Z" fill="url(#metalLip)"/>
+    <ellipse cx="450" cy="316" rx="74" ry="22" fill="#6C4736" fill-opacity=".74"/>
+    <ellipse cx="450" cy="322" rx="58" ry="16" fill="#4B3128" fill-opacity=".36"/>
+    <path d="M398 462H502L530 534H370L398 462Z" fill="url(#metalDark)"/>
+    <path d="M348 536H552" stroke="url(#plinth)" stroke-width="26" stroke-linecap="round"/>
+  </g>
+
+  <path d="M450 214V278" stroke="#E7CFAB" stroke-opacity=".34" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M428 210C432 192 468 192 472 210C473 215 471 222 468 227L460 240C455 248 445 248 440 240L432 227C429 222 427 215 428 210Z" fill="#8E3A30" fill-opacity=".34"/>
+  <path d="M438 242C442 248 458 248 462 242" stroke="#E7CFAB" stroke-opacity=".52" stroke-width="2.5" stroke-linecap="round"/>
+
+  <path d="M336 576H564" stroke="#F3E2C6" stroke-opacity=".2" stroke-width="1.5"/>
+</svg>

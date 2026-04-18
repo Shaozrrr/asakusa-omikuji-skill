@@ -264,6 +264,14 @@ blockquote {
   border: 1px solid rgba(255, 242, 220, 0.08);
 }
 
+.hero-illustration {
+  position: relative;
+  width: min(100%, 468px);
+  height: auto;
+  margin-top: auto;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.16));
+}
+
 .hero-scene::after {
   content: "";
   position: absolute;

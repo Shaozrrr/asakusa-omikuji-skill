@@ -260,22 +260,22 @@ function spawnSmokeParticle() {
   }
 
   heroSmoke.particles.push({
-    x: heroSmoke.width * 0.5 + (Math.random() - 0.5) * 5,
-    y: heroSmoke.height - 18 + Math.random() * 4,
-    vx: (Math.random() - 0.5) * 4,
-    vy: -18 - Math.random() * 10,
-    size: 5 + Math.random() * 5,
+    x: heroSmoke.width * 0.5 + (Math.random() - 0.5) * 2.6,
+    y: heroSmoke.height - 18 + Math.random() * 3,
+    vx: (Math.random() - 0.5) * 1.1,
+    vy: -24 - Math.random() * 8,
+    size: 1.5 + Math.random() * 1.8,
     age: 0,
-    maxLife: 3.2 + Math.random() * 1.2,
+    maxLife: 2.8 + Math.random() * 0.9,
     wobblePhase: Math.random() * Math.PI * 2,
-    wobbleSpeed: 1 + Math.random() * 1.4,
-    wobbleAmplitude: 7 + Math.random() * 9,
-    growth: 7 + Math.random() * 4,
-    rotation: (Math.random() - 0.5) * 0.2,
+    wobbleSpeed: 0.82 + Math.random() * 0.9,
+    wobbleAmplitude: 1.8 + Math.random() * 2.8,
+    growth: 1.4 + Math.random() * 1.3,
+    driftBias: (Math.random() - 0.5) * 0.18,
   });
 
-  if (heroSmoke.particles.length > 160) {
-    heroSmoke.particles.splice(0, heroSmoke.particles.length - 160);
+  if (heroSmoke.particles.length > 280) {
+    heroSmoke.particles.splice(0, heroSmoke.particles.length - 280);
   }
 }
 
@@ -286,35 +286,34 @@ function drawSmokeParticle(particle) {
   }
 
   const life = particle.age / particle.maxLife;
-  const fadeIn = clamp(particle.age / 0.24, 0, 1);
-  const fadeOut = 1 - clamp((life - 0.42) / 0.58, 0, 1);
-  const alpha = fadeIn * fadeOut * (0.08 + (1 - life) * 0.05);
-  const radiusX = particle.size * (0.58 + life * 0.74);
-  const radiusY = particle.size * (1.26 + life * 1.36);
+  const fadeIn = clamp(particle.age / 0.16, 0, 1);
+  const fadeOut = 1 - clamp((life - 0.54) / 0.46, 0, 1);
+  const edgeDistance = Math.abs(particle.x - heroSmoke.width * 0.5);
+  const edgeFade =
+    1 - clamp(edgeDistance / (heroSmoke.width * 0.32), 0, 1) ** 1.35;
+  const topFade = clamp((particle.y + 12) / (heroSmoke.height * 0.72), 0, 1);
+  const alpha =
+    fadeIn *
+    fadeOut *
+    edgeFade *
+    topFade *
+    (0.048 + (1 - life) * 0.034);
+  const radius = particle.size * (0.82 + life * 0.84);
 
   ctx.save();
   ctx.translate(particle.x, particle.y);
-  ctx.rotate(particle.rotation + particle.vx * 0.012);
   ctx.globalAlpha = alpha;
-  ctx.fillStyle = "rgba(236, 228, 216, 0.58)";
-  ctx.shadowColor = "rgba(241, 236, 228, 0.18)";
-  ctx.shadowBlur = 18;
+  ctx.fillStyle = "rgba(237, 229, 216, 0.6)";
+  ctx.shadowColor = "rgba(238, 232, 224, 0.14)";
+  ctx.shadowBlur = 10;
   ctx.beginPath();
-  ctx.ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.globalAlpha = alpha * 0.42;
-  ctx.fillStyle = "rgba(220, 208, 192, 0.42)";
+  ctx.globalAlpha = alpha * 0.3;
+  ctx.fillStyle = "rgba(222, 212, 198, 0.44)";
   ctx.beginPath();
-  ctx.ellipse(
-    -radiusX * 0.18,
-    -radiusY * 0.08,
-    radiusX * 0.72,
-    radiusY * 0.7,
-    -0.22,
-    0,
-    Math.PI * 2,
-  );
+  ctx.arc(radius * 0.44, -radius * 0.22, radius * 0.76, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
@@ -331,7 +330,7 @@ function stepHeroSmoke(timestamp) {
   const dt = Math.min(0.032, (timestamp - heroSmoke.lastFrame) / 1000 || 0.016);
   heroSmoke.lastFrame = timestamp;
 
-  heroSmoke.emissionCarry += dt * 15;
+  heroSmoke.emissionCarry += dt * 34;
   while (heroSmoke.emissionCarry >= 1) {
     spawnSmokeParticle();
     heroSmoke.emissionCarry -= 1;
@@ -353,16 +352,18 @@ function stepHeroSmoke(timestamp) {
       Math.sin(
         particle.wobblePhase +
           age * particle.wobbleSpeed +
-          particle.y * 0.038,
+          particle.y * 0.026,
       ) +
       Math.sin(
-        particle.wobblePhase * 0.62 + particle.x * 0.024 - age * 1.18,
+        particle.wobblePhase * 0.52 + particle.x * 0.014 - age * 0.92,
       ) *
-        0.55;
+        0.28;
 
-    let vx = particle.vx + swirl * particle.wobbleAmplitude * dt;
-    let vy = particle.vy - (5 + (1 - life) * 4.8) * dt;
-    let rotation = particle.rotation * 0.992 + swirl * 0.0025;
+    const centerPull = (heroSmoke.width * 0.5 - particle.x) * 0.018;
+    let vx =
+      particle.vx +
+      (swirl * particle.wobbleAmplitude + centerPull + particle.driftBias) * dt;
+    let vy = particle.vy - (8.5 + (1 - life) * 3.2) * dt;
 
     for (const gust of heroSmoke.gusts) {
       const freshness = 1 - gust.age / gust.ttl;
@@ -370,13 +371,12 @@ function stepHeroSmoke(timestamp) {
         -((particle.y - gust.centerY) ** 2) / (2 * gust.radius ** 2),
       );
       const force = freshness * band;
-      vx += gust.x * force * 44 * dt;
-      vy += gust.y * force * 18 * dt;
-      rotation += gust.x * force * 0.005;
+      vx += gust.x * force * 58 * dt;
+      vy += gust.y * force * 14 * dt;
     }
 
-    vx *= 0.992;
-    vy *= 0.994;
+    vx *= 0.986;
+    vy *= 0.992;
 
     nextParticles.push({
       ...particle,
@@ -385,8 +385,7 @@ function stepHeroSmoke(timestamp) {
       vy,
       x: particle.x + vx * dt,
       y: particle.y + vy * dt,
-      size: particle.size + particle.growth * dt * (0.28 + life * 0.6),
-      rotation,
+      size: particle.size + particle.growth * dt * (0.12 + life * 0.24),
     });
   }
 

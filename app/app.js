@@ -170,8 +170,8 @@ const elements = {
 const heroWind = {
   currentX: 0,
   currentY: 0,
-  targetX: 0,
-  targetY: 0,
+  lastPointerX: null,
+  lastPointerY: null,
   frame: 0,
 };
 
@@ -184,23 +184,23 @@ function applyHeroWind(x, y) {
     return;
   }
 
-  elements.heroScene.style.setProperty("--wind-x", x.toFixed(3));
-  elements.heroScene.style.setProperty("--wind-y", y.toFixed(3));
+  elements.heroScene.style.setProperty("--gust-x", x.toFixed(3));
+  elements.heroScene.style.setProperty("--gust-y", y.toFixed(3));
 }
 
 function animateHeroWind() {
-  heroWind.currentX += (heroWind.targetX - heroWind.currentX) * 0.12;
-  heroWind.currentY += (heroWind.targetY - heroWind.currentY) * 0.12;
+  heroWind.currentX *= 0.9;
+  heroWind.currentY *= 0.9;
 
   applyHeroWind(heroWind.currentX, heroWind.currentY);
 
   const settled =
-    Math.abs(heroWind.targetX - heroWind.currentX) < 0.005 &&
-    Math.abs(heroWind.targetY - heroWind.currentY) < 0.005;
+    Math.abs(heroWind.currentX) < 0.005 &&
+    Math.abs(heroWind.currentY) < 0.005;
 
   if (settled) {
-    heroWind.currentX = heroWind.targetX;
-    heroWind.currentY = heroWind.targetY;
+    heroWind.currentX = 0;
+    heroWind.currentY = 0;
     applyHeroWind(heroWind.currentX, heroWind.currentY);
     heroWind.frame = 0;
     return;
@@ -209,10 +209,9 @@ function animateHeroWind() {
   heroWind.frame = window.requestAnimationFrame(animateHeroWind);
 }
 
-function setHeroWindTarget(x, y) {
-  heroWind.targetX = x;
-  heroWind.targetY = y;
-
+function nudgeHeroWind(x, y) {
+  heroWind.currentX = Math.max(-1, Math.min(1, heroWind.currentX + x));
+  heroWind.currentY = Math.max(-1, Math.min(1, heroWind.currentY + y));
   if (!heroWind.frame) {
     heroWind.frame = window.requestAnimationFrame(animateHeroWind);
   }
@@ -733,16 +732,23 @@ function bindEvents() {
 
   elements.heroScene?.addEventListener("pointermove", (event) => {
     const rect = elements.heroScene.getBoundingClientRect();
-    const normalizedX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-    const normalizedY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
-    setHeroWindTarget(
-      Math.max(-1, Math.min(1, normalizedX)),
-      Math.max(-1, Math.min(1, normalizedY)),
+    const deltaX =
+      heroWind.lastPointerX === null ? 0 : event.clientX - heroWind.lastPointerX;
+    const deltaY =
+      heroWind.lastPointerY === null ? 0 : event.clientY - heroWind.lastPointerY;
+
+    heroWind.lastPointerX = event.clientX;
+    heroWind.lastPointerY = event.clientY;
+
+    nudgeHeroWind(
+      Math.max(-1, Math.min(1, (deltaX / rect.width) * 9)),
+      Math.max(-1, Math.min(1, (deltaY / rect.height) * 6)),
     );
   });
 
   elements.heroScene?.addEventListener("pointerleave", () => {
-    setHeroWindTarget(0, 0);
+    heroWind.lastPointerX = null;
+    heroWind.lastPointerY = null;
   });
 
   elements.startRitual.addEventListener("click", () => {

@@ -266,37 +266,37 @@ blockquote {
   border: 1px solid rgba(255, 242, 220, 0.08);
 }
 
-.hero-candle {
+.hero-incense {
   position: relative;
-  width: 236px;
-  height: 312px;
+  width: 264px;
+  height: 300px;
   margin-top: auto;
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
 
-.candle-aura {
+.incense-aura {
   position: absolute;
-  top: 16px;
-  width: 188px;
-  height: 188px;
+  top: 14px;
+  width: 204px;
+  height: 204px;
   border-radius: 999px;
   background:
-    radial-gradient(circle, rgba(246, 218, 164, 0.24), rgba(164, 88, 56, 0.06) 44%, transparent 74%);
-  filter: blur(12px);
-  opacity: 0.78;
+    radial-gradient(circle, rgba(238, 206, 148, 0.2), rgba(164, 88, 56, 0.05) 44%, transparent 74%);
+  filter: blur(14px);
+  opacity: 0.72;
 }
 
-.candle-smoke {
+.incense-smoke {
   position: absolute;
-  top: -18px;
+  top: -8px;
   width: 144px;
   height: 180px;
   pointer-events: none;
   transform:
-    translateX(calc(var(--wind-x) * 10px))
-    translateY(calc(var(--wind-y) * -3px));
+    translateX(calc(var(--wind-x) * 12px))
+    translateY(calc(var(--wind-y) * -4px));
   transition: transform 180ms ease-out;
 }
 
@@ -342,183 +342,135 @@ blockquote {
   animation: smoke-drift-c 9.4s ease-in-out infinite -3s;
 }
 
-.candle-flame-shell {
+.incense-burner {
   position: absolute;
-  top: 32px;
-  width: 24px;
-  height: 82px;
-  transform:
-    translateX(calc(var(--wind-x) * 4px))
-    rotate(calc(var(--wind-x) * 7deg));
-  transform-origin: center bottom;
-  transition: transform 160ms ease-out;
-}
-
-.candle-flame {
-  position: absolute;
-  inset: 0;
-  transform-origin: center bottom;
-  border-radius: 68% 68% 46% 46% / 84% 84% 24% 24%;
+  bottom: 52px;
+  width: 172px;
+  height: 112px;
+  border-radius: 46% 46% 34% 34% / 62% 62% 38% 38%;
   background:
-    radial-gradient(circle at 50% 18%, rgba(255, 251, 241, 0.98), rgba(251, 223, 150, 0.94) 34%, rgba(216, 118, 56, 0.68) 74%, rgba(216, 118, 56, 0) 100%);
+    linear-gradient(180deg, rgba(190, 150, 103, 0.98), rgba(118, 82, 58, 0.98));
   box-shadow:
-    0 0 14px rgba(255, 197, 103, 0.28),
-    0 0 28px rgba(187, 99, 52, 0.14);
-  animation: candle-flicker 3.8s ease-in-out infinite;
+    inset -18px 0 24px rgba(79, 53, 40, 0.14),
+    inset 14px 0 18px rgba(255, 240, 214, 0.12),
+    0 18px 28px rgba(0, 0, 0, 0.14);
 }
 
-.candle-flame::after {
+.incense-burner::before {
   content: "";
   position: absolute;
+  inset: 16px 18px 12px;
+  border-radius: 46% 46% 34% 34% / 58% 58% 36% 36%;
+  background:
+    linear-gradient(180deg, rgba(209, 171, 125, 0.28), rgba(118, 82, 58, 0.06));
+  opacity: 0.7;
+}
+
+.incense-mouth {
+  position: absolute;
+  top: -8px;
   left: 50%;
-  top: 14px;
-  width: 4px;
-  height: 14px;
+  width: 136px;
+  height: 28px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: rgba(255, 250, 234, 0.88);
-  filter: blur(0.6px);
-  opacity: 0.82;
-}
-
-.candle-wick {
-  position: absolute;
-  top: 104px;
-  width: 2px;
-  height: 14px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #f5dcb4, #573627 48%, #1f1311 100%);
-  z-index: 2;
-}
-
-.candle-body {
-  position: relative;
-  width: 64px;
-  height: 204px;
-  clip-path: polygon(18% 0, 82% 0, 92% 100%, 8% 100%);
   background:
-    linear-gradient(180deg, rgba(252, 247, 239, 0.98), rgba(244, 232, 211, 0.97) 28%, rgba(224, 198, 165, 0.96) 100%),
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.12) 0 2px,
-      rgba(214, 189, 156, 0.08) 2px 4px
-    );
+    linear-gradient(180deg, rgba(211, 172, 122, 0.98), rgba(138, 96, 66, 0.98));
   box-shadow:
-    inset -8px 0 16px rgba(168, 130, 95, 0.12),
-    inset 8px 0 12px rgba(255, 255, 255, 0.36),
-    0 18px 26px rgba(0, 0, 0, 0.1);
+    inset 0 1px 0 rgba(245, 222, 188, 0.24),
+    0 6px 10px rgba(0, 0, 0, 0.08);
 }
 
-.candle-body::before {
+.incense-mouth::after {
   content: "";
   position: absolute;
-  inset: 16px 14px auto;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.42);
-  filter: blur(0.3px);
-}
-
-.candle-body::after {
-  content: "";
-  position: absolute;
-  top: -4px;
-  left: 9px;
-  right: 9px;
-  height: 14px;
+  inset: 6px 16px;
   border-radius: 999px;
   background:
-    radial-gradient(circle at 50% 40%, rgba(255, 251, 243, 0.98), rgba(241, 224, 195, 0.92) 72%, rgba(201, 171, 138, 0.56));
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+    linear-gradient(180deg, rgba(92, 61, 45, 0.9), rgba(61, 40, 31, 0.9));
 }
 
-.candle-wax {
+.incense-ash {
   position: absolute;
-  top: 14px;
+  top: 10px;
+  left: 50%;
+  width: 68px;
+  height: 8px;
+  transform: translateX(-50%);
   border-radius: 999px;
   background:
-    linear-gradient(180deg, rgba(251, 246, 239, 0.99), rgba(227, 206, 176, 0.98));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 2px 4px rgba(96, 63, 44, 0.06);
-  transform-origin: top center;
+    linear-gradient(180deg, rgba(82, 56, 44, 0.94), rgba(54, 36, 30, 0.94));
 }
 
-.candle-wax-a {
-  left: 10px;
-  width: 10px;
-  height: 58px;
-  animation: wax-fall-a 18s ease-in-out infinite;
-}
-
-.candle-wax-b {
-  right: 10px;
-  width: 8px;
-  height: 46px;
-  animation: wax-fall-b 22s ease-in-out infinite;
-}
-
-.candle-wax-c {
-  left: 26px;
-  width: 7px;
-  height: 28px;
-  animation: wax-fall-c 26s ease-in-out infinite;
-}
-
-.candle-dish {
+.incense-ember {
   position: absolute;
-  bottom: 62px;
-  width: 126px;
+  top: 12px;
+  left: 50%;
+  width: 22px;
+  height: 10px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 207, 120, 0.86), rgba(198, 88, 42, 0.62) 54%, rgba(198, 88, 42, 0) 100%);
+  filter: blur(0.8px);
+  opacity: 0.76;
+  animation: ember-pulse 4.8s ease-in-out infinite;
+}
+
+.incense-handle {
+  position: absolute;
+  top: 42px;
+  width: 38px;
   height: 18px;
   border-radius: 999px;
   background:
-    linear-gradient(180deg, rgba(156, 118, 82, 0.96), rgba(79, 53, 39, 0.96));
-  box-shadow:
-    inset 0 1px 0 rgba(244, 223, 191, 0.18),
-    0 8px 14px rgba(0, 0, 0, 0.1);
+    linear-gradient(180deg, rgba(161, 122, 86, 0.96), rgba(92, 62, 44, 0.96));
+  box-shadow: inset 0 1px 0 rgba(241, 214, 179, 0.14);
 }
 
-.candle-dish::before {
-  content: "";
-  position: absolute;
-  inset: 4px 18px auto;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(55, 35, 28, 0.28);
+.incense-handle-left {
+  left: -16px;
 }
 
-.candle-holder {
+.incense-handle-right {
+  right: -16px;
+}
+
+.incense-foot {
   position: absolute;
-  bottom: 20px;
-  width: 30px;
-  height: 62px;
-  border-radius: 0 0 18px 18px;
+  bottom: -28px;
+  width: 18px;
+  height: 34px;
+  border-radius: 0 0 12px 12px;
   background:
-    linear-gradient(180deg, rgba(72, 45, 41, 0.98), rgba(24, 16, 16, 0.98));
-  box-shadow:
-    inset 0 1px 0 rgba(222, 191, 154, 0.12),
-    0 14px 22px rgba(0, 0, 0, 0.12);
+    linear-gradient(180deg, rgba(102, 70, 52, 0.98), rgba(43, 28, 24, 0.98));
 }
 
-.candle-holder::before {
-  content: "";
-  position: absolute;
-  top: -10px;
-  left: -22px;
-  right: -22px;
-  height: 12px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(154, 116, 82, 0.9), rgba(78, 52, 39, 0.9));
+.incense-foot-left {
+  left: 38px;
 }
 
-.candle-base {
+.incense-foot-center {
+  left: 50%;
+  width: 16px;
+  transform: translateX(-50%);
+}
+
+.incense-foot-right {
+  right: 38px;
+}
+
+.incense-plinth {
   position: absolute;
   bottom: 0;
-  width: 140px;
-  height: 16px;
+  width: 176px;
+  height: 18px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #654033, #2a1a19);
-  box-shadow: 0 14px 20px rgba(0, 0, 0, 0.14);
+  background:
+    linear-gradient(180deg, rgba(104, 66, 53, 0.98), rgba(45, 27, 24, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(228, 197, 159, 0.12),
+    0 14px 20px rgba(0, 0, 0, 0.14);
 }
 
 .hero-scene::after {
@@ -693,23 +645,15 @@ blockquote {
   color: rgba(255, 244, 230, 0.72);
 }
 
-@keyframes candle-flicker {
+@keyframes ember-pulse {
   0%,
   100% {
-    transform: translateX(0) rotate(-1deg) scale(1, 1);
-    opacity: 0.94;
+    opacity: 0.64;
+    transform: translateX(-50%) scale(0.92);
   }
-  22% {
-    transform: translateX(-0.4px) rotate(0.8deg) scale(0.96, 1.06);
-    opacity: 1;
-  }
-  48% {
-    transform: translateX(0.6px) rotate(-0.8deg) scale(1.02, 0.98);
-    opacity: 0.92;
-  }
-  72% {
-    transform: translateX(-0.5px) rotate(1.3deg) scale(0.98, 1.04);
-    opacity: 0.97;
+  50% {
+    opacity: 0.88;
+    transform: translateX(-50%) scale(1.04);
   }
 }
 

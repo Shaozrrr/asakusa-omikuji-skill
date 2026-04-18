@@ -130,6 +130,7 @@ const state = { ...initialState };
 
 const elements = {
   heroScene: document.querySelector(".hero-scene"),
+  heroSmoke: document.querySelector("#hero-smoke"),
   startRitual: document.querySelector("#start-ritual"),
   scrollOverview: document.querySelector("#scroll-overview"),
   installApp: document.querySelector("#install-app"),
@@ -172,8 +173,26 @@ const heroWind = {
   currentY: 0,
   lastPointerX: null,
   lastPointerY: null,
+  lastPointerTime: null,
   frame: 0,
 };
+
+const heroSmoke = {
+  canvas: null,
+  ctx: null,
+  width: 0,
+  height: 0,
+  dpr: 1,
+  frame: 0,
+  lastFrame: 0,
+  emissionCarry: 0,
+  particles: [],
+  gusts: [],
+};
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -189,8 +208,8 @@ function applyHeroWind(x, y) {
 }
 
 function animateHeroWind() {
-  heroWind.currentX *= 0.9;
-  heroWind.currentY *= 0.9;
+  heroWind.currentX *= 0.88;
+  heroWind.currentY *= 0.88;
 
   applyHeroWind(heroWind.currentX, heroWind.currentY);
 
@@ -209,12 +228,222 @@ function animateHeroWind() {
   heroWind.frame = window.requestAnimationFrame(animateHeroWind);
 }
 
-function nudgeHeroWind(x, y) {
-  heroWind.currentX = Math.max(-1, Math.min(1, heroWind.currentX + x));
-  heroWind.currentY = Math.max(-1, Math.min(1, heroWind.currentY + y));
+function resizeHeroSmoke() {
+  if (!heroSmoke.canvas || !heroSmoke.ctx) {
+    return;
+  }
+
+  const rect = heroSmoke.canvas.getBoundingClientRect();
+  const width = Math.max(120, Math.round(rect.width));
+  const height = Math.max(140, Math.round(rect.height));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  if (
+    width === heroSmoke.width &&
+    height === heroSmoke.height &&
+    dpr === heroSmoke.dpr
+  ) {
+    return;
+  }
+
+  heroSmoke.width = width;
+  heroSmoke.height = height;
+  heroSmoke.dpr = dpr;
+  heroSmoke.canvas.width = width * dpr;
+  heroSmoke.canvas.height = height * dpr;
+  heroSmoke.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function spawnSmokeParticle() {
+  if (!heroSmoke.width || !heroSmoke.height) {
+    return;
+  }
+
+  heroSmoke.particles.push({
+    x: heroSmoke.width * 0.5 + (Math.random() - 0.5) * 5,
+    y: heroSmoke.height - 18 + Math.random() * 4,
+    vx: (Math.random() - 0.5) * 4,
+    vy: -18 - Math.random() * 10,
+    size: 5 + Math.random() * 5,
+    age: 0,
+    maxLife: 3.2 + Math.random() * 1.2,
+    wobblePhase: Math.random() * Math.PI * 2,
+    wobbleSpeed: 1 + Math.random() * 1.4,
+    wobbleAmplitude: 7 + Math.random() * 9,
+    growth: 7 + Math.random() * 4,
+    rotation: (Math.random() - 0.5) * 0.2,
+  });
+
+  if (heroSmoke.particles.length > 160) {
+    heroSmoke.particles.splice(0, heroSmoke.particles.length - 160);
+  }
+}
+
+function drawSmokeParticle(particle) {
+  const ctx = heroSmoke.ctx;
+  if (!ctx) {
+    return;
+  }
+
+  const life = particle.age / particle.maxLife;
+  const fadeIn = clamp(particle.age / 0.24, 0, 1);
+  const fadeOut = 1 - clamp((life - 0.42) / 0.58, 0, 1);
+  const alpha = fadeIn * fadeOut * (0.08 + (1 - life) * 0.05);
+  const radiusX = particle.size * (0.58 + life * 0.74);
+  const radiusY = particle.size * (1.26 + life * 1.36);
+
+  ctx.save();
+  ctx.translate(particle.x, particle.y);
+  ctx.rotate(particle.rotation + particle.vx * 0.012);
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = "rgba(236, 228, 216, 0.58)";
+  ctx.shadowColor = "rgba(241, 236, 228, 0.18)";
+  ctx.shadowBlur = 18;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.globalAlpha = alpha * 0.42;
+  ctx.fillStyle = "rgba(220, 208, 192, 0.42)";
+  ctx.beginPath();
+  ctx.ellipse(
+    -radiusX * 0.18,
+    -radiusY * 0.08,
+    radiusX * 0.72,
+    radiusY * 0.7,
+    -0.22,
+    0,
+    Math.PI * 2,
+  );
+  ctx.fill();
+  ctx.restore();
+}
+
+function stepHeroSmoke(timestamp) {
+  if (!heroSmoke.ctx) {
+    return;
+  }
+
+  if (!heroSmoke.lastFrame) {
+    heroSmoke.lastFrame = timestamp;
+  }
+
+  const dt = Math.min(0.032, (timestamp - heroSmoke.lastFrame) / 1000 || 0.016);
+  heroSmoke.lastFrame = timestamp;
+
+  heroSmoke.emissionCarry += dt * 15;
+  while (heroSmoke.emissionCarry >= 1) {
+    spawnSmokeParticle();
+    heroSmoke.emissionCarry -= 1;
+  }
+
+  heroSmoke.gusts = heroSmoke.gusts
+    .map((gust) => ({ ...gust, age: gust.age + dt }))
+    .filter((gust) => gust.age < gust.ttl);
+
+  const nextParticles = [];
+  for (const particle of heroSmoke.particles) {
+    const age = particle.age + dt;
+    if (age >= particle.maxLife || particle.y < -28) {
+      continue;
+    }
+
+    const life = age / particle.maxLife;
+    const swirl =
+      Math.sin(
+        particle.wobblePhase +
+          age * particle.wobbleSpeed +
+          particle.y * 0.038,
+      ) +
+      Math.sin(
+        particle.wobblePhase * 0.62 + particle.x * 0.024 - age * 1.18,
+      ) *
+        0.55;
+
+    let vx = particle.vx + swirl * particle.wobbleAmplitude * dt;
+    let vy = particle.vy - (5 + (1 - life) * 4.8) * dt;
+    let rotation = particle.rotation * 0.992 + swirl * 0.0025;
+
+    for (const gust of heroSmoke.gusts) {
+      const freshness = 1 - gust.age / gust.ttl;
+      const band = Math.exp(
+        -((particle.y - gust.centerY) ** 2) / (2 * gust.radius ** 2),
+      );
+      const force = freshness * band;
+      vx += gust.x * force * 44 * dt;
+      vy += gust.y * force * 18 * dt;
+      rotation += gust.x * force * 0.005;
+    }
+
+    vx *= 0.992;
+    vy *= 0.994;
+
+    nextParticles.push({
+      ...particle,
+      age,
+      vx,
+      vy,
+      x: particle.x + vx * dt,
+      y: particle.y + vy * dt,
+      size: particle.size + particle.growth * dt * (0.28 + life * 0.6),
+      rotation,
+    });
+  }
+
+  heroSmoke.particles = nextParticles;
+
+  heroSmoke.ctx.clearRect(0, 0, heroSmoke.width, heroSmoke.height);
+  for (const particle of heroSmoke.particles) {
+    drawSmokeParticle(particle);
+  }
+
+  heroSmoke.frame = window.requestAnimationFrame(stepHeroSmoke);
+}
+
+function launchHeroGust(x, y, centerYRatio) {
+  heroWind.currentX = clamp(heroWind.currentX + x * 0.42, -1, 1);
+  heroWind.currentY = clamp(heroWind.currentY + y * 0.24, -0.7, 0.7);
   if (!heroWind.frame) {
     heroWind.frame = window.requestAnimationFrame(animateHeroWind);
   }
+
+  if (!heroSmoke.ctx) {
+    return;
+  }
+
+  heroSmoke.gusts.push({
+    x,
+    y: y * 0.4,
+    age: 0,
+    ttl: 0.44 + Math.abs(x) * 0.26,
+    centerY: heroSmoke.height * centerYRatio,
+    radius: 20 + Math.abs(x) * 32 + Math.abs(y) * 14,
+  });
+
+  if (heroSmoke.gusts.length > 7) {
+    heroSmoke.gusts.splice(0, heroSmoke.gusts.length - 7);
+  }
+}
+
+function setupHeroSmoke() {
+  if (!elements.heroSmoke) {
+    return;
+  }
+
+  heroSmoke.canvas = elements.heroSmoke;
+  heroSmoke.ctx = heroSmoke.canvas.getContext("2d");
+
+  if (!heroSmoke.ctx) {
+    return;
+  }
+
+  resizeHeroSmoke();
+  spawnSmokeParticle();
+  if (!heroSmoke.frame) {
+    heroSmoke.frame = window.requestAnimationFrame(stepHeroSmoke);
+  }
+
+  window.addEventListener("resize", resizeHeroSmoke, { passive: true });
 }
 
 function resolveBucket(fortuneName) {
@@ -736,19 +965,34 @@ function bindEvents() {
       heroWind.lastPointerX === null ? 0 : event.clientX - heroWind.lastPointerX;
     const deltaY =
       heroWind.lastPointerY === null ? 0 : event.clientY - heroWind.lastPointerY;
+    const elapsed =
+      heroWind.lastPointerTime === null
+        ? Infinity
+        : Math.max(16, event.timeStamp - heroWind.lastPointerTime);
 
     heroWind.lastPointerX = event.clientX;
     heroWind.lastPointerY = event.clientY;
+    heroWind.lastPointerTime = event.timeStamp;
 
-    nudgeHeroWind(
-      Math.max(-1, Math.min(1, (deltaX / rect.width) * 9)),
-      Math.max(-1, Math.min(1, (deltaY / rect.height) * 6)),
+    const speedX = deltaX / elapsed;
+    const speedY = deltaY / elapsed;
+    const swipeEnergy = Math.abs(speedX) + Math.abs(speedY) * 0.5;
+
+    if (Math.abs(deltaX) < 10 || swipeEnergy < 0.32) {
+      return;
+    }
+
+    launchHeroGust(
+      clamp(speedX * 0.94, -1.2, 1.2),
+      clamp(speedY * 0.34, -0.5, 0.5),
+      clamp((event.clientY - rect.top) / rect.height, 0.14, 0.84),
     );
   });
 
   elements.heroScene?.addEventListener("pointerleave", () => {
     heroWind.lastPointerX = null;
     heroWind.lastPointerY = null;
+    heroWind.lastPointerTime = null;
   });
 
   elements.startRitual.addEventListener("click", () => {
@@ -785,6 +1029,7 @@ function bindEvents() {
 }
 
 async function bootstrap() {
+  setupHeroSmoke();
   try {
     await loadFortunes();
     await registerServiceWorker();

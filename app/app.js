@@ -129,6 +129,7 @@ const initialState = {
 const state = { ...initialState };
 
 const elements = {
+  heroScene: document.querySelector(".hero-scene"),
   startRitual: document.querySelector("#start-ritual"),
   scrollOverview: document.querySelector("#scroll-overview"),
   installApp: document.querySelector("#install-app"),
@@ -166,8 +167,55 @@ const elements = {
   actionButtonTemplate: document.querySelector("#action-button-template"),
 };
 
+const heroWind = {
+  currentX: 0,
+  currentY: 0,
+  targetX: 0,
+  targetY: 0,
+  frame: 0,
+};
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function applyHeroWind(x, y) {
+  if (!elements.heroScene) {
+    return;
+  }
+
+  elements.heroScene.style.setProperty("--wind-x", x.toFixed(3));
+  elements.heroScene.style.setProperty("--wind-y", y.toFixed(3));
+}
+
+function animateHeroWind() {
+  heroWind.currentX += (heroWind.targetX - heroWind.currentX) * 0.12;
+  heroWind.currentY += (heroWind.targetY - heroWind.currentY) * 0.12;
+
+  applyHeroWind(heroWind.currentX, heroWind.currentY);
+
+  const settled =
+    Math.abs(heroWind.targetX - heroWind.currentX) < 0.005 &&
+    Math.abs(heroWind.targetY - heroWind.currentY) < 0.005;
+
+  if (settled) {
+    heroWind.currentX = heroWind.targetX;
+    heroWind.currentY = heroWind.targetY;
+    applyHeroWind(heroWind.currentX, heroWind.currentY);
+    heroWind.frame = 0;
+    return;
+  }
+
+  heroWind.frame = window.requestAnimationFrame(animateHeroWind);
+}
+
+function setHeroWindTarget(x, y) {
+  heroWind.targetX = x;
+  heroWind.targetY = y;
+
+  if (!heroWind.frame) {
+    heroWind.frame = window.requestAnimationFrame(animateHeroWind);
+  }
 }
 
 function resolveBucket(fortuneName) {
@@ -681,6 +729,20 @@ function bindEvents() {
       behavior: "smooth",
       block: "start",
     });
+  });
+
+  elements.heroScene?.addEventListener("pointermove", (event) => {
+    const rect = elements.heroScene.getBoundingClientRect();
+    const normalizedX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const normalizedY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+    setHeroWindTarget(
+      Math.max(-1, Math.min(1, normalizedX)),
+      Math.max(-1, Math.min(1, normalizedY)),
+    );
+  });
+
+  elements.heroScene?.addEventListener("pointerleave", () => {
+    setHeroWindTarget(0, 0);
   });
 
   elements.startRitual.addEventListener("click", () => {

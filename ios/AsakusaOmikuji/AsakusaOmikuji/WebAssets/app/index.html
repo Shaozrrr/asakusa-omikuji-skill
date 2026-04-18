@@ -25,7 +25,7 @@
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./icons/apple-touch-icon-180.png" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="stylesheet" href="./styles.css?v=20260418-candle2" />
+    <link rel="stylesheet" href="./styles.css?v=20260418-candle3" />
   </head>
   <body>
     <div class="page-glow page-glow-a"></div>
@@ -62,7 +62,25 @@
         <div class="hero-scene" aria-hidden="true">
           <div class="hero-candle">
             <div class="candle-aura"></div>
-            <div class="candle-flame"></div>
+            <div class="candle-smoke">
+              <svg class="smoke-svg" viewBox="0 0 120 180" aria-hidden="true">
+                <path
+                  class="smoke-path smoke-path-a"
+                  d="M58 172C28 144 24 116 48 90C72 64 76 34 60 8"
+                />
+                <path
+                  class="smoke-path smoke-path-b"
+                  d="M64 172C88 146 92 118 72 92C54 68 54 36 66 8"
+                />
+                <path
+                  class="smoke-path smoke-path-c"
+                  d="M60 172C48 150 52 128 64 108C76 88 76 56 64 28"
+                />
+              </svg>
+            </div>
+            <div class="candle-flame-shell">
+              <div class="candle-flame"></div>
+            </div>
             <div class="candle-wick"></div>
             <div class="candle-body">
               <span class="candle-wax candle-wax-a"></span>
@@ -218,6 +236,6 @@
       <button class="button"></button>
     </template>
 
-    <script type="module" src="./app.js?v=20260416-2"></script>
+    <script type="module" src="./app.js?v=20260418-wind1"></script>
   </body>
 </html>
